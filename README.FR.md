@@ -35,8 +35,6 @@ dependencyResolutionManagement {
 Vous devez disposer d'une clé MDTK pour utiliser la librairie.
 En option, un chemin d'AdUnit peut aussi être renseigné au format `/{networkCode}/{adBlockPath}`.
 
-``` kotlin
-
 ## Carousel
 
 Le carousel d'aperçus est un composant d'affichage de vignettes de vidéos en mode horizontal. 
