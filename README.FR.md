@@ -13,7 +13,7 @@ Ajouter la dépendance à votre fichier `build.gradle`:
 
 ``` kotlin    
 dependencies {    
-  implementation("com.digiteka.android:videofeed-android:2.0.0")  
+  implementation("com.github.digiteka:videofeed-android:2.0.0")  
 }   
 ```
 
