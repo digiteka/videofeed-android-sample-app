@@ -51,6 +51,9 @@ class MainActivity : AppCompatActivity() {
 					startActivity(CarouselComposeActivity.newInstance(this@MainActivity, etMdtk.text.toString(), etAdUnitPath.text.toString().nullIfBlank()))
 				}
 			}
+			btnVideoPlayer.setOnClickListener {
+				startActivity(VideoPlayerActivity.newInstance(this@MainActivity, etMdtk.text.toString(), etAdUnitPath.text.toString().nullIfBlank()))
+			}
 		}
 	}
 }

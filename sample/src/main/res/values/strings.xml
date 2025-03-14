@@ -7,4 +7,5 @@
 	<string name="btn_fragment">VideoFeed Fragment</string>
 	<string name="btn_carousel">Carousel (xml)</string>
 	<string name="btn_carousel_compose">Carousel (Compose)</string>
+	<string name="btn_video_player">Video Player</string>
 </resources>

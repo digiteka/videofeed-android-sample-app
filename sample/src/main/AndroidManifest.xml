@@ -33,6 +33,9 @@
 		<activity
 			android:name=".CarouselComposeActivity"
 			android:exported="false" />
+		<activity
+			android:name=".VideoPlayerActivity"
+			android:exported="false" />
 	</application>
 
 </manifest>

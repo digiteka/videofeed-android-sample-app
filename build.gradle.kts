@@ -9,6 +9,6 @@ plugins {
 val extVersionMajor by extra { 2 }
 val extVersionMinor by extra { 0 }
 val extVersionPatch by extra { 0 }
-val extVersionBuild by extra { 5 }
+val extVersionBuild by extra { 6 }
 val extVersionCode: Int by extra { extVersionMajor * 1_000_000 + extVersionMinor * 10_000 + extVersionPatch * 100 + extVersionBuild }
 val extVersionNamePrefix: String by extra { "$extVersionMajor.$extVersionMinor.$extVersionPatch" }

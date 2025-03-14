@@ -112,3 +112,47 @@ videoFeedFragment.load(mdtk, videoId, adUnitPath)
 ```
 
 The `videoId` parameter is nullable. If provided, the video player will open directly on the corresponding video; otherwise, the player will open on the first video of the feed.
+
+# Open the VideoFeed from an iframe player
+
+1. Create a JavaScript / Android interface that intercepts POST messages sent by the iframe player and launches the VideoFeed if a `trigger_vf_chromeless` message is recognized:
+``` kotlin
+class AndroidJavascriptInterface(
+    private val context: Context,
+    private val mdtk: String,
+    private val adUnitPath: String?
+) {
+    @JavascriptInterface
+    fun postMessage(data: String) {
+        if (data.contains("trigger_vf_chromeless")) {
+            data.split("-").lastOrNull()?.let { videoId ->
+                context.startActivity(VideoFeedActivity.newInstance(context, mdtk, videoId, adUnitPath))
+            }
+        }
+    }
+}
+```
+
+2. Add the interface to the WebView:
+``` kotlin
+webview.addJavascriptInterface(AndroidJavascriptInterface(context, mdtk, adUnitPath), "AndroidJavascriptInterface")
+```
+
+3. Send JavaScript POST messages to the Android interface by integrating the following script into the HTML page:
+``` html
+<script>
+  window.addEventListener('message', function(e) {
+      AndroidJavascriptInterface.postMessage(e.data);
+  });
+</script>
+```
+
+The script can also be injected on the fly via a `webviewClient`:
+``` kotlin
+webview.webViewClient = object: WebViewClient() {
+  override fun onPageFinished(view: WebView?, url: String?) {
+    super.onPageFinished(view, url)
+    view?.loadUrl("javascript:window.addEventListener('message', function(e) {AndroidJavascriptInterface.postMessage(e.data);});")
+  }
+}
+```
