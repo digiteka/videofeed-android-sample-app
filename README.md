@@ -1,4 +1,4 @@
-Digiteka VideoFeed Library
+#Digiteka VideoFeed Library
 
 [![en](https://img.shields.io/badge/lang-en-red.svg)](README.md)
 [![fr](https://img.shields.io/badge/lang-fr-blue.svg)](README.FR.md)
@@ -13,7 +13,7 @@ Add the dependency to your `build.gradle` file:
 
 ``` kotlin    
 dependencies {    
-  implementation("com.github.digiteka:videofeed-android:2.0.0")
+  implementation("com.github.digiteka:videofeed-android:2.1.0")
 }   
 ```
 
@@ -34,6 +34,7 @@ dependencyResolutionManagement {
 
 You need an MDTK key to use the library.
 Optionally, an AdUnit path can also be specified in the format `/{networkCode}/{adBlockPath}`.
+Additionally, a zone ID can be provided to customize the feed content.
 
 ## Carousel
 
@@ -48,10 +49,10 @@ The carousel is a component for displaying video thumbnails in horizontal mode. 
     android:layout_height="@dimen/carousel_height" />
 ```
 
-The component must then be loaded via the `load()` method taking your MDTK key as a parameter:
+The component must then be loaded via the `load()` method taking your MDTK key and optional parameters:
 
 ``` kotlin
-binding.videoFeedCarousel.load(mdtk, adUnitPath)
+binding.videoFeedCarousel.load(mdtk, adUnitPath, zoneId)
 ```
 
 By default, clicking on a video opens the video player (VideoFeed) in full screen in a new activity.
@@ -72,6 +73,7 @@ VideoFeedCarousel(
         .height(AppTheme.dimens.carouselHeight),
     mdtk = mdtk,
     adUnitPath = adUnitPath,
+    zoneId = zoneId,
     onVideoClicked = { mdtk, videoId ->
       // Handle video click
     }
@@ -88,7 +90,7 @@ The VideoFeed is a vertical video player, with scroll and swipe navigation. It c
 ### Activity
 
 ``` kotlin
-startActivity(VideoFeedActivity.newInstance(context, mdtk, videoId, adUnitPath))
+startActivity(VideoFeedActivity.newInstance(context, mdtk, videoId, adUnitPath, zoneId))
 ```
 
 The `videoId` parameter is nullable. If provided, the video player will open directly on the corresponding video; otherwise, the player will open on the first video of the feed.
@@ -108,25 +110,28 @@ The `videoId` parameter is nullable. If provided, the video player will open dir
 It must then be initialized with the MDTK key:
 
 ``` kotlin
-videoFeedFragment.load(mdtk, videoId, adUnitPath)
+videoFeedFragment.load(mdtk, videoId, adUnitPath, zoneId, onCloseClicked)
 ```
 
 The `videoId` parameter is nullable. If provided, the video player will open directly on the corresponding video; otherwise, the player will open on the first video of the feed.
 
-# Open the VideoFeed from an iframe player
+## Advanced Configuration
+
+### Open the VideoFeed from an iframe player
 
 1. Create a JavaScript / Android interface that intercepts POST messages sent by the iframe player and launches the VideoFeed if a `trigger_vf_chromeless` message is recognized:
 ``` kotlin
 class AndroidJavascriptInterface(
     private val context: Context,
     private val mdtk: String,
-    private val adUnitPath: String?
+    private val adUnitPath: String?,
+    private val zoneId: String?
 ) {
     @JavascriptInterface
     fun postMessage(data: String) {
         if (data.contains("trigger_vf_chromeless")) {
             data.split("-").lastOrNull()?.let { videoId ->
-                context.startActivity(VideoFeedActivity.newInstance(context, mdtk, videoId, adUnitPath))
+                context.startActivity(VideoFeedActivity.newInstance(context, mdtk, videoId, adUnitPath, zoneId))
             }
         }
     }
@@ -135,7 +140,7 @@ class AndroidJavascriptInterface(
 
 2. Add the interface to the WebView:
 ``` kotlin
-webview.addJavascriptInterface(AndroidJavascriptInterface(context, mdtk, adUnitPath), "AndroidJavascriptInterface")
+webview.addJavascriptInterface(AndroidJavascriptInterface(context, mdtk, adUnitPath, zoneId), "AndroidJavascriptInterface")
 ```
 
 3. Send JavaScript POST messages to the Android interface by integrating the following script into the HTML page:
@@ -156,3 +161,37 @@ webview.webViewClient = object: WebViewClient() {
   }
 }
 ```
+
+### URL Interception
+
+You can intercept URLs clicked within the VideoFeed by configuring the global URL handler:
+
+``` kotlin
+VideoFeedConfig.shouldOverrideUrlLoading = { uri ->
+    // Return true if you handled the URL, false otherwise
+    when {
+        uri.host == "example.com" -> {
+            // Handle specific URLs
+            true
+        }
+        else -> false // Let the default browser handle it
+    }
+}
+```
+
+### Close Button Handling
+
+When using `VideoFeedFragment`, you can control the close button visibility and behavior by passing the `onCloseClicked` parameter to the `load()` method:
+
+``` kotlin
+// With close button
+videoFeedFragment.load(mdtk, videoId, adUnitPath, zoneId) {
+    // Handle close button click
+    finish() // or any custom logic
+}
+
+// Without close button
+videoFeedFragment.load(mdtk, videoId, adUnitPath, zoneId, null)
+```
+
+The close button will only appear if the `onCloseClicked` parameter is not `null`. The `VideoFeedActivity` automatically handles the close button by finishing the activity.

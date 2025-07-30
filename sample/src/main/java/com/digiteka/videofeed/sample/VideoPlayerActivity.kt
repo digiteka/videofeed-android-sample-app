@@ -16,6 +16,7 @@ class VideoPlayerActivity : AppCompatActivity() {
 	companion object {
 		private const val EXTRA_MDTK: String = "CarouselActivity.EXTRA_MDTK"
 		private const val EXTRA_ADUNITPATH: String = "CarouselActivity.EXTRA_ADUNITPATH"
+		private const val EXTRA_ZONEID: String = "CarouselActivity.EXTRA_ZONEID"
 
 		private val iframe = "<iframe " +
 				"	src=\"https://www.ultimedia.com/deliver/generic/iframe/mdtk/01857682/zone/1/showtitle/1/src/xkx5zlf/chromeless/1\" " +
@@ -50,6 +51,7 @@ class VideoPlayerActivity : AppCompatActivity() {
 
 	private val mdtk by lazy { checkNotNull(intent.getStringExtra(EXTRA_MDTK)) { "Missing mdtk" } }
 	private val adUnitPath by lazy { intent.getStringExtra(EXTRA_ADUNITPATH) }
+	private val zoneId by lazy { intent.getStringExtra(EXTRA_ZONEID) }
 
 	@SuppressLint("SetJavaScriptEnabled")
 	override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,7 +67,7 @@ class VideoPlayerActivity : AppCompatActivity() {
 				domStorageEnabled = true
 			}
 
-			addJavascriptInterface(AndroidJavascriptInterface(context, mdtk, adUnitPath), "AndroidJavascriptInterface")
+			addJavascriptInterface(AndroidJavascriptInterface(context, mdtk, adUnitPath, zoneId), "AndroidJavascriptInterface")
 			webViewClient = object : WebViewClient() {
 				override fun onPageFinished(view: WebView?, url: String?) {
 					super.onPageFinished(view, url)
@@ -81,13 +83,14 @@ class VideoPlayerActivity : AppCompatActivity() {
 	class AndroidJavascriptInterface(
 		private val context: Context,
 		private val mdtk: String,
-		private val adUnitPath: String?
+		private val adUnitPath: String?,
+		private val zoneId: String?
 	) {
 		@JavascriptInterface
 		fun postMessage(data: String) {
 			if (data.contains("trigger_vf_chromeless")) {
 				data.split("-").lastOrNull()?.let { videoId ->
-					context.startActivity(VideoFeedActivity.newInstance(context, mdtk, videoId, adUnitPath))
+					context.startActivity(VideoFeedActivity.newInstance(context, mdtk, videoId, adUnitPath, zoneId))
 				}
 			}
 		}

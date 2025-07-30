@@ -26,6 +26,12 @@
 		android:layout_height="wrap_content"
 		android:hint="@string/adunitpath_hint" />
 
+	<androidx.appcompat.widget.AppCompatEditText
+		android:id="@+id/etZoneId"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:hint="@string/zoneId_hint" />
+
 	<androidx.appcompat.widget.AppCompatButton
 		android:id="@+id/btnActivity"
 		android:layout_width="match_parent"

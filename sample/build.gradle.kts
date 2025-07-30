@@ -50,6 +50,7 @@ android {
 		buildConfigField("String", "DIGITEKA_VIDEOFEED_MDTK", "\"${localProperties.getProperty("DIGITEKA_VIDEOFEED_MDTK") ?: ""}\"")
 		buildConfigField("String", "DIGITEKA_VIDEOFEED_VIDEOID", "\"${localProperties.getProperty("DIGITEKA_VIDEOFEED_VIDEOID") ?: ""}\"")
 		buildConfigField("String", "DIGITEKA_VIDEOFEED_ADUNITPATH", "\"${localProperties.getProperty("DIGITEKA_VIDEOFEED_ADUNITPATH") ?: ""}\"")
+		buildConfigField("String", "DIGITEKA_VIDEOFEED_ZONEID", "\"${localProperties.getProperty("DIGITEKA_VIDEOFEED_ZONEID") ?: ""}\"")
 	}
 	buildFeatures {
 		compose = true
@@ -82,6 +83,7 @@ dependencies {
 	implementation(libs.androidx.appcompat)
 	implementation(libs.androidx.activity)
 	implementation(libs.androidx.constraintlayout)
+	implementation(libs.androidx.recyclerview)
 
 	implementation(platform(libs.compose.bom))
 	implementation(libs.activity.compose)
